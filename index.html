@@ -188,38 +188,44 @@
             function getInngangOgUtgang(size){
                 let row;
                 let column;
-                let num1 = getTilfeldigTall(1, size);
-                let num2 = getTilfeldigTall(1, size);
+
                 if(Math.random() < 0.5) 
                     {   row = 0;
-                        for(let i = 1; i <= size; i++) {
-                            if(mazeModel.rows[row][i].isWide && i == num1) {break;}
-                            num1 = getTilfeldigTall(1, size);
+                        let num1=[];
+                       
+                        for(let i = 0; i <= size; i++) {
+                            if((mazeModel.rows[row][i].isWide)) {
+                                num1.push(i);
+                            }
+                            
                         }
-                        mazeModel.rows[row][num1].isOpen = true;
+                        console.log(num1);
+                        let column1 = num1[getTilfeldigTall(0, num1.length-1)];
+                        let column2 = num1[getTilfeldigTall(0, num1.length-1)];
 
-                        for(let i = 1; i <= size; i++) {
-                            if(mazeModel.rows[size][i].isWide && i == num2) {break;}
-                            num2 = getTilfeldigTall(1, size);
-                        }
+                        mazeModel.rows[row][column1].isOpen = true;
 
-                        mazeModel.rows[size][num2].isOpen = true;
+                        mazeModel.rows[size][column2].isOpen = true;
                     }
                 else {
                         
                         column = 0;
-                        for(let i = 1; i <= size; i++) {
-                            if(mazeModel.rows[i][column].isWide && i == num1) {break;}
-                            num1 = getTilfeldigTall(1, size);
+                        let num2=[];
+                       
+                        for(let i = 0; i <= size; i++) {
+                            if((mazeModel.rows[i][column].isHigh)) {
+                                num2.push(i);
+                            }
+                            
                         }
+                        console.log(num2);
+                        let row1 = num2[getTilfeldigTall(0, num2.length-1)];
+                        let row2 = num2[getTilfeldigTall(0, num2.length-1)];
 
-                        mazeModel.rows[num1][column].isOpen = true;
+                        mazeModel.rows[row1][column].isOpen = true;
 
-                        for(let i = 1; i <= size; i++) {
-                            if(mazeModel.rows[i][size].isWide && i == num2) {break;}
-                            num2 = getTilfeldigTall(1, size);
-                        }
-                        mazeModel.rows[num2][size].isOpen = true;
+                        mazeModel.rows[row2][size].isOpen = true;
+
 
                     }
 
