@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+                border-spacing: 0;
+            }
+
+            td {
+                background-color: white;
+                padding: 0;
+                /* border: 1px solid gray; */
+            }
+
+            td.room {
+                width: 40px;
+                height: 40px;
+            }
+
+            td.wall {
+                background-color: black;
+            }
+
+            td.noWall {
+                background-color: white;
+            }
+
+            td.small {
+                width: 10px;
+            }
+
+            td.wide {
+                width: 40px;
+            }
+
+            td.high {
+                height: 40px;
+            }
+
+            td.low {
+                height: 10px;
+            }
+    </style>
+</head>
+<body>
+    <table id="table"></table>
+
+    <script>
+        let viewTable = document.getElementById('table');
+
+        let mazeModel = {
+                size: 10,
+                // rows: [
+                //     [
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //         { isHigh: false, isWide: true, isOpen: false },
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //         { isHigh: false, isWide: true, isOpen: false },
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //     ],
+                //     [
+                //         { isHigh: true, isWide: false, isOpen: false },
+                //         { isHigh: true, isWide: true, isOpen: true },
+                //         { isHigh: true, isWide: false, isOpen: false },
+                //         { isHigh: true, isWide: true, isOpen: true },
+                //         { isHigh: true, isWide: false, isOpen: false },
+                //     ],
+                //     [
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //         { isHigh: false, isWide: true, isOpen: false },
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //         { isHigh: false, isWide: true, isOpen: false },
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //     ],
+                //     [
+                //         { isHigh: true, isWide: false, isOpen: false },
+                //         { isHigh: true, isWide: true, isOpen: true},
+                //         { isHigh: true, isWide: false, isOpen: false },
+                //         { isHigh: true, isWide: true, isOpen: true },
+                //         { isHigh: true, isWide: false, isOpen: false },
+                //     ],
+                //     [
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //         { isHigh: false, isWide: true, isOpen: false },
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //         { isHigh: false, isWide: true, isOpen: false },
+                //         { isHigh: false, isWide: false, isOpen: false },
+                //     ],
+                // ]
+            };
+                getLabyrintSize();
+                function getLabyrintSize() {
+                
+                let givenSize = prompt("Please enter the Labyrint size: 10x10", 10);
+                if (givenSize == null || givenSize == "") {
+                   mazeModel.size = 0;
+                } else {
+                    mazeModel.size = givenSize;
+                }
+                
+            }
+            initModel(mazeModel.size);
+            updateView();
+
+
+
+            function updateView(){
+                viewTable.innerHTML = '';
+                for(let i = 0; i < mazeModel.rows.length; i++){
+                    let modelRow = mazeModel.rows[i];
+                    let viewRow = viewTable.insertRow();
+                    
+
+                    for(let j = 0; j < modelRow.length; j++){
+                        let modelCell = modelRow[j];
+                        let viewCell = viewRow.insertCell();
+                        
+
+                        if(!modelCell.isHigh) {
+                            viewCell.classList.add('low');
+                        }
+                        else viewCell.classList.add('high');
+                        if (!modelCell.isWide) viewCell.classList.add('small');
+                        else viewCell.classList.add('wide');
+                        if(!modelCell.isOpen) {
+                            viewCell.classList.add('wall');
+                            
+                        }
+                        else viewCell.classList.add('noWall');
+
+                        if((i%2 != 0) && (j%2 != 0)) {
+                            viewCell.classList.remove('high', 'wide', 'wall', 'noWall');
+                            viewCell.classList.add('room');
+                        }
+                        if(i > 0 && i < (mazeModel.rows.length-1) && j > 0 && j < (modelRow.length-1)){
+                            viewCell.addEventListener("click", handleClick, false);
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+            function initModel(size){
+                // mazeModel = {};
+                mazeModel.rows = [];
+                for(let i = 0; i<((size*2)+1); i++){
+                    let modelRow = [];
+                
+                    for(let j = 0; j<((size*2)+1); j++){
+                        let modelCell = {};
+                        modelCell = {
+                            isHigh: i % 2 ==0 ? false : true,
+                            isWide: j % 2 ==0 ? false : true,
+                            isOpen: findIfOpen(i, j, (size*2)),
+                        };
+                        modelRow.push(modelCell);
+                    }
+                    mazeModel.rows.push(modelRow);
+                }
+
+                getInngangOgUtgang(size*2);
+                          
+
+            }
+            function findIfOpen(i, j, size){
+                if ((i == 0) || (i == size) || (j == 0) || (j == size)) return false;
+                
+                return  Math.random() < 0.5 ? true : false;;
+            }
+            function handleClick(aMouseEvent){
+                // console.log(aMouseEvent);
+                let column = aMouseEvent.srcElement.cellIndex;
+                let row =aMouseEvent.srcElement.parentElement.sectionRowIndex;
+
+                let desiredCell = mazeModel.rows[row][column];
+                desiredCell.isOpen == true ? desiredCell.isOpen = false : desiredCell.isOpen = true;
+
+                updateView();
+
+            }
+            function getInngangOgUtgang(size){
+                let row;
+                let column;
+                let num1 = getTilfeldigTall(1, size);
+                let num2 = getTilfeldigTall(1, size);
+                if(Math.random() < 0.5) 
+                    {   row = 0;
+                        for(let i = 1; i <= size; i++) {
+                            if(mazeModel.rows[row][i].isWide && i == num1) {break;}
+                            num1 = getTilfeldigTall(1, size);
+                        }
+                        mazeModel.rows[row][num1].isOpen = true;
+
+                        for(let i = 1; i <= size; i++) {
+                            if(mazeModel.rows[size][i].isWide && i == num2) {break;}
+                            num2 = getTilfeldigTall(1, size);
+                        }
+
+                        mazeModel.rows[size][num2].isOpen = true;
+                    }
+                else {
+                        
+                        column = 0;
+                        for(let i = 1; i <= size; i++) {
+                            if(mazeModel.rows[i][column].isWide && i == num1) {break;}
+                            num1 = getTilfeldigTall(1, size);
+                        }
+
+                        mazeModel.rows[num1][column].isOpen = true;
+
+                        for(let i = 1; i <= size; i++) {
+                            if(mazeModel.rows[i][size].isWide && i == num2) {break;}
+                            num2 = getTilfeldigTall(1, size);
+                        }
+                        mazeModel.rows[num2][size].isOpen = true;
+
+                    }
+
+
+
+            }
+            function getTilfeldigTall(min, max){
+                return min + Math.floor(Math.random()*(max-min+1));
+
+            }
+    </script>
+    
+</body>
+</html>
